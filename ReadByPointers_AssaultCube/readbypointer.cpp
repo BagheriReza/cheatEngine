@@ -8,10 +8,23 @@
 #include <string>  //for std::string
 
 using namespace std;
+// functions declaration
+DWORD findingProcessId();
+//DWORD findingAddress(int PointerLevel, HANDLE hProcess, DWORD offsets[], DWORD BaseAddress);
+//bool readFromMemory(HANDLE hprocess);
+//bool writeToMemory(HANDLE hprocess);
+
+//Global variable
+std::string nameOfGame = "AssaultCube";
+
+
+
 
 int main(void){
 
-    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 6904);
+    DWORD processID = findingProcessId();
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processID);
     if (hProcess == NULL) { // Failed to get a handle
 	    cout << "OpenProcess failed. GetLastError = " << dec << GetLastError() << endl;
 	    system("pause");
@@ -82,4 +95,33 @@ int main(void){
 
 
 
+}
+
+
+// With the help of this address, we can use the name of game to find the ProcessID
+DWORD findingProcessId()
+{
+    //Finding the game window named
+	LPCTSTR LGameWindow = nameOfGame.c_str();
+	HWND hGameWindow = FindWindow(NULL, LGameWindow);
+	if (!hGameWindow)
+	{
+		cout << "AssaultCube not found. GetLastError = " << dec << GetLastError() << endl;
+		system("pause");
+		return EXIT_FAILURE;
+	}
+	//cout << "Game window found." << endl;
+ 
+	//Finding the processID of the game window
+	DWORD processID = NULL;
+	GetWindowThreadProcessId(hGameWindow, &processID);
+	if (processID == NULL)
+	{
+		cout << "Getting window PID failed. GetLastError = " << dec << GetLastError() << endl;
+		system("pause");
+		return EXIT_FAILURE;
+	}
+	//cout << "Game PID found." << endl;
+
+    return processID;
 }
