@@ -1,7 +1,13 @@
 # cheatEngine
-# Dummy process
-It is phase zero, to help developer to get familier with winodws API and how read from other process memory.
-It can be used to read and write in the mempry of real process or game when we have actual address.
+# Phase zero: Dummy process
+Phase zero objective includes getting hands-on experience on:
+    - C++ pointer, pointer to pointer addressing
+    - Windows APIs
+    - reading other process memory
 
-# ReadBypointer_AssultCube
-In this part with help of pointer and read base address we can read and write in the memory of the game.
+# Phase One: ReadBypointer_AssultCube
+In this phase, we work on the AssultCube game. As an target to change the Ammo value.
+Phase one objectives include:
+    - Reading ammo value from memory of AssultCube
+    - Updating the ammo value
+
