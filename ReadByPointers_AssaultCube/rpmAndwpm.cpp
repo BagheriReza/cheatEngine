@@ -16,10 +16,11 @@ bool writeToMemory(HANDLE hProcess, DWORD address);
 
 //Global variable
 std::string nameOfGame = "AssaultCube";
+
 // Ammo based address, offsets, target value
 DWORD AmmoBaseAddress = { 0x0057B0B8 }; // Currently the playerBaseAddress
 DWORD AmmoOffsets[] = { 0x140, 0x0 };
-int ammoValue = 4321;
+int ammoValue = 500;
 
 
 
@@ -39,9 +40,11 @@ int main(void){
 
     readFromMemory(hProcess, finalPointer);
 
-    //WriteProcessMemory(hProcess,(LPVOID)finalPointer,&ammoValue,sizeof(ammoValue),0);
+	ammoValue = 1000;
+
     writeToMemory (hProcess, finalPointer);
-    readFromMemory(hProcess, finalPointer);
+    
+	readFromMemory(hProcess, finalPointer);
    
 
 }
