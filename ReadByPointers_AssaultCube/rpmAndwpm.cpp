@@ -6,7 +6,9 @@
 #include <iomanip>
 #include <sstream> //for std::stringstream 
 #include <string>  //for std::string
-#include <tlhelp32.h>
+//#include <tlhelp32.h>
+#include <cstdint>
+
 
 
 using namespace std;
@@ -17,6 +19,7 @@ bool readFromMemory(HANDLE hProcess, DWORD address);
 bool writeToMemory(HANDLE hProcess, DWORD address, int value);
 bool updateAmmo(HANDLE hProcess, int value);
 bool updateHealthPoint(HANDLE hProcess, int value);
+void search(HANDLE handle, int target);
 
 //Global variable
 std::string nameOfGame = "AssaultCube";
@@ -49,7 +52,7 @@ int main(void){
 	healthPointValue = 1234;
     updateHealthPoint(hProcess, healthPointValue);
 
-   
+	search(hProcess, ammoValue);
    
 
 }
@@ -58,7 +61,8 @@ bool updateAmmo(HANDLE hProcess, int value)
 {
     // Ammo Value read and update
 	DWORD finalPointer = findingFinalPointer(1, hProcess, AmmoOffsets, BaseAddress);
-
+	cout << "final pointer" << finalPointer;
+	
 	printf("Reading Ammo Value .... \n");
     readFromMemory(hProcess, finalPointer);
 
@@ -161,4 +165,37 @@ bool writeToMemory(HANDLE hProcess, DWORD address, int value)
     }
   
     printf("The value updated to %d \n",value);
+}
+
+void search(HANDLE handle, int target) {
+	MEMORY_BASIC_INFORMATION info;
+	unsigned char* p = NULL;
+	
+	cout << "searching value: " << target << "..." << endl;
+
+	for (p = NULL;
+		VirtualQueryEx(handle, p, &info, sizeof(info)) == sizeof(info);
+		p += info.RegionSize)
+	{
+		if (info.State == MEM_COMMIT) {
+			//cout << info.BaseAddress << "-" << info.RegionSize << " | " << info.Type << endl;
+			 
+			int value;
+			for (int offset = 0; offset < (int)info.RegionSize; offset +=4) {
+				
+				DWORD targetAddr = (DWORD)((intptr_t)info.BaseAddress + offset);
+				ReadProcessMemory(handle, (PBYTE*)targetAddr, &value, sizeof(value), 0);
+	 
+				if (value == target) {
+					cout << (intptr_t)info.BaseAddress + offset << endl;
+				}
+			}
+		}
+	}
+
+	DWORD targetAddr = (DWORD)(0x9a730);
+	int value;
+	ReadProcessMemory(handle, (PBYTE*)targetAddr, &value, sizeof(value), 0);
+
+	cout << value;
 }
